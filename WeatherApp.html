@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    input[type="text"] {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    button {
+      background: #7c05a3;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #5d047b;
+    }
+
+    #weatherResult {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .container {
+        padding: 1.5rem;
+      }
+
+      input[type="text"] {
+        font-size: 0.9rem;
+      }
+
+      button {
+        font-size: 0.9rem;
+      }
+
+      #weatherResult {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Weather App</h1>
+    <input type="text" id="cityInput" placeholder="Enter a city">
+    <button id="getWeather">Get Weather</button>
+    <p id="weatherResult"></p>
+  </div>
+
+  <script>
+    const apiKey = "a1894c5dc8fd0c354b0b992c8bc08347";
+    const apiUrl = "https://api.openweathermap.org/data/2.5/weather";
+
+    async function getWeather(city) {
+      try {
+        const response = await fetch(`${apiUrl}?q=${city}&appid=${apiKey}&units=metric`);
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.log("Error fetching weather data", error);
+      }
+    }
+
+    document.getElementById("getWeather").addEventListener("click", async () => {
+      const city = document.getElementById("cityInput").value;
+
+      if (!city) {
+        alert("Please enter a city name!");
+        return;
+      }
+
+      const weatherData = await getWeather(city);
+
+      if (weatherData) {
+        const weatherResult = document.getElementById("weatherResult");
+        weatherResult.innerHTML = `
+          <strong>${city}</strong><br>
+          Temperature: ${weatherData.main.temp}°C<br>
+          Weather: ${weatherData.weather[0].description}<br>
+          Humidity: ${weatherData.main.humidity}%<br>
+          Wind Speed: ${weatherData.wind.speed} m/s
+        `;
+      } else {
+        document.getElementById("weatherResult").textContent = "City not found. Please try again!";
+      }
+    });
+  </script>
+</body>
+</html>
